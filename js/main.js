@@ -25,11 +25,31 @@ zlFetch(`${dotaApi}/constants/heroes`)
       const selectedAttackTypes = [
         ...document.querySelectorAll("#attack-type input:checked"),
       ].map((checkbox) => checkbox.id);
-      const filtered = heroes.filter((hero) => {
-        if (selectedAttackTypes.length === 0) return true;
-        const attackType = hero.attack_type.toLowerCase();
-        return selectedAttackTypes.includes(attackType);
-      });
+      const selectedPrimaryAttributes = [
+        ...document.querySelectorAll("#primary-attribute input:checked"),
+      ].map((checkbox) => checkbox.id);
+      const selectedRoles = [
+        ...document.querySelectorAll("#role input:checked"),
+      ].map((checkbox) => checkbox.id);
+
+      const filtered = heroes
+        .filter((hero) => {
+          if (selectedAttackTypes.length === 0) return true;
+          const attackType = hero.attack_type.toLowerCase();
+          return selectedAttackTypes.includes(attackType);
+        })
+        .filter((hero) => {
+          if (selectedPrimaryAttributes.length === 0) return true;
+          return selectedPrimaryAttributes.includes(hero.primary_attr);
+        })
+        .filter((hero) => {
+          if (selectedRoles.length === 0) return true;
+          const heroRoles = hero.roles.map((role) => role.toLowerCase());
+          for (const role of selectedRoles) {
+            if (heroRoles.includes(role)) return true;
+          }
+          return false;
+        });
       heroesList.innerHTML = "";
       filtered.forEach((hero) => {
         const li = document.createElement("li");
